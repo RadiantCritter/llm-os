@@ -14,36 +14,36 @@ from ai.assistants import get_llm_os
 
 nest_asyncio.apply()
 st.set_page_config(
-    page_title="LLM OS",
-    page_icon=":orange_heart:",
+    page_title="Ash",
+    page_icon="Ash",
 )
-st.title("LLM OS")
-st.markdown("##### :orange_heart: built using [phidata](https://github.com/phidatahq/phidata)")
+st.title("Ash")
+st.markdown("##### LLM - Operating System")
 
-with st.expander(":rainbow[:point_down: How to use]"):
+with st.expander(":green[Our Internal Agents]"):
+    st.markdown("- Web Search Agent")
+    st.markdown("- Calculator")
     st.markdown(
-        "- Add blog post to knowledge: https://blog.samaltman.com/what-i-wish-someone-had-told-me and ask: what did sam altman wish he knew?"
+        "- Financial Research Agent"
     )
-    st.markdown("- Test Web search: Whats happening in france?")
-    st.markdown("- Test Calculator: What is 10!")
-    st.markdown("- Test Finance: What is the price of AAPL?")
+    st.markdown("- Academic Researcher Agent ")
     st.markdown(
-        "- Test Finance: Write a comparison between nvidia and amd, use all finance tools available and summarize the key points"
+        "- Also, you can make me a RAG-OS by giving me external website link to talk on specific indident"
     )
-    st.markdown("- Test Research: Write a report on Hashicorp IBM acquisition")
+
 
 
 def main() -> None:
     # Get username
     user_id = get_username_sidebar()
     if user_id:
-        st.sidebar.info(f":technologist: User: {user_id}")
+        st.sidebar.info(f"{user_id}")
     else:
-        st.write(":technologist: Please enter a username")
+        st.write(" Your name sir!")
         return
 
     # Sidebar checkboxes for selecting tools
-    st.sidebar.markdown("### Select Tools")
+    st.sidebar.markdown("### Select Internal Agents")
 
     # Enable Calculator
     if "calculator_enabled" not in st.session_state:
@@ -51,7 +51,7 @@ def main() -> None:
     # Get calculator_enabled from session state if set
     calculator_enabled = st.session_state["calculator_enabled"]
     # Checkbox for enabling calculator
-    calculator = st.sidebar.checkbox("Calculator", value=calculator_enabled, help="Enable calculator.")
+    calculator = st.sidebar.checkbox("Calculator", value=calculator_enabled, help=" ")
     if calculator_enabled != calculator:
         st.session_state["calculator_enabled"] = calculator
         calculator_enabled = calculator
@@ -63,7 +63,7 @@ def main() -> None:
     # Get file_tools_enabled from session state if set
     file_tools_enabled = st.session_state["file_tools_enabled"]
     # Checkbox for enabling shell tools
-    file_tools = st.sidebar.checkbox("File Tools", value=file_tools_enabled, help="Enable file tools.")
+    file_tools = st.sidebar.checkbox("File Tools", value=file_tools_enabled, help=" ")
     if file_tools_enabled != file_tools:
         st.session_state["file_tools_enabled"] = file_tools
         file_tools_enabled = file_tools
@@ -76,8 +76,7 @@ def main() -> None:
     ddg_search_enabled = st.session_state["ddg_search_enabled"]
     # Checkbox for enabling web search
     ddg_search = st.sidebar.checkbox(
-        "Web Search", value=ddg_search_enabled, help="Enable web search using DuckDuckGo."
-    )
+        "Web Search", value=ddg_search_enabled)
     if ddg_search_enabled != ddg_search:
         st.session_state["ddg_search_enabled"] = ddg_search
         ddg_search_enabled = ddg_search
@@ -90,15 +89,12 @@ def main() -> None:
     finance_tools_enabled = st.session_state["finance_tools_enabled"]
     # Checkbox for enabling shell tools
     finance_tools = st.sidebar.checkbox(
-        "Yahoo Finance", value=finance_tools_enabled, help="Enable finance tools."
+        "Financial Agent", value=finance_tools_enabled, help=" "
     )
     if finance_tools_enabled != finance_tools:
         st.session_state["finance_tools_enabled"] = finance_tools
         finance_tools_enabled = finance_tools
         restart_assistant()
-
-    # Sidebar checkboxes for selecting team members
-    st.sidebar.markdown("### Select Team Members")
 
     # Enable Research Assistant
     if "research_assistant_enabled" not in st.session_state:
@@ -107,9 +103,9 @@ def main() -> None:
     research_assistant_enabled = st.session_state["research_assistant_enabled"]
     # Checkbox for enabling web search
     research_assistant = st.sidebar.checkbox(
-        "Research Assistant",
+        "Academic Research Agent",
         value=research_assistant_enabled,
-        help="Enable the research assistant (uses Exa).",
+        help=" ",
     )
     if research_assistant_enabled != research_assistant:
         st.session_state["research_assistant_enabled"] = research_assistant
@@ -178,12 +174,12 @@ def main() -> None:
             st.session_state["url_scrape_key"] = 0
 
         input_url = st.sidebar.text_input(
-            "Add URL to Knowledge Base", type="default", key=st.session_state["url_scrape_key"]
+            "Drop URL here!", type="default", key=st.session_state["url_scrape_key"]
         )
-        add_url_button = st.sidebar.button("Add URL")
+        add_url_button = st.sidebar.button("Submit")
         if add_url_button:
             if input_url is not None:
-                alert = st.sidebar.info("Processing URLs...", icon="ℹ️")
+                alert = st.sidebar.info("Processing URLs...")
                 if f"{input_url}_scraped" not in st.session_state:
                     scraper = WebsiteReader(max_links=2, max_depth=1)
                     web_documents: List[Document] = scraper.read(input_url)
@@ -199,10 +195,10 @@ def main() -> None:
             st.session_state["file_uploader_key"] = 100
 
         uploaded_file = st.sidebar.file_uploader(
-            "Add a PDF :page_facing_up:", type="pdf", key=st.session_state["file_uploader_key"]
+            "Add a PDF", type="pdf", key=st.session_state["file_uploader_key"]
         )
         if uploaded_file is not None:
-            alert = st.sidebar.info("Processing PDF...", icon="🧠")
+            alert = st.sidebar.info("Reading PDF...")
             file_name = uploaded_file.name.split(".")[0]
             if f"{file_name}_uploaded" not in st.session_state:
                 reader = PDFReader()
@@ -215,9 +211,9 @@ def main() -> None:
             alert.empty()
 
     if llm_os.knowledge_base and llm_os.knowledge_base.vector_db:
-        if st.sidebar.button("Clear Knowledge Base"):
+        if st.sidebar.button("Clear extra knowledge base"):
             llm_os.knowledge_base.vector_db.clear()
-            st.sidebar.success("Knowledge base cleared")
+            st.sidebar.success("Extra Knowledge base cleared")
 
     # Show team member memory
     if llm_os.team and len(llm_os.team) > 0:
@@ -228,24 +224,7 @@ def main() -> None:
                         _team_member_memory_container = st.empty()
                         _team_member_memory_container.json(team_member.memory.get_llm_messages())
 
-    if llm_os.storage:
-        assistant_run_ids: List[str] = llm_os.storage.get_all_run_ids(user_id=user_id)
-        new_assistant_run_id = st.sidebar.selectbox("Run ID", options=assistant_run_ids)
-        if st.session_state["llm_os_run_id"] != new_assistant_run_id:
-            logger.info(f"---*--- Loading run: {new_assistant_run_id} ---*---")
-            st.session_state["llm_os"] = get_llm_os(
-                user_id=user_id,
-                run_id=new_assistant_run_id,
-                calculator=calculator_enabled,
-                ddg_search=ddg_search_enabled,
-                file_tools=file_tools_enabled,
-                finance_tools=finance_tools_enabled,
-                research_assistant=research_assistant_enabled,
-            )
-            st.rerun()
-
-    if st.sidebar.button("New Run"):
-        restart_assistant()
+    
 
 
 def restart_assistant():

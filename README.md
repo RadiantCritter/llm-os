@@ -76,8 +76,3 @@ phi ws up
 ```sh
 phi ws down
 ```
-# llm-os
-# llm-os
-# llm-os
-# llm-os
-# llm-os
